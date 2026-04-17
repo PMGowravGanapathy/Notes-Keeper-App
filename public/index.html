@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Notes Keeper</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="app">
+
+  <header>
+    <h1>📝 Notes Keeper</h1>
+    <input type="text" id="search" placeholder="🔍 Search notes..." onkeyup="searchNotes()">
+  </header>
+
+  <div class="note-input">
+    <input type="text" id="title" placeholder="Note Title">
+    <textarea id="content" placeholder="Write your note..."></textarea>
+    <button onclick="addNote()">+ Add Note</button>
+  </div>
+
+  <div id="notes" class="notes-grid"></div>
+
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
