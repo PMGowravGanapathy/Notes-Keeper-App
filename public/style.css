@@ -164,3 +164,49 @@ header input {
   background: #ff2e44;
   transform: scale(1.05);
 }
+/* Empty state */
+.empty {
+  text-align: center;
+  opacity: 0.6;
+  margin-top: 20px;
+}
+
+/* Improve note spacing */
+.note {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 140px;
+}
+
+/* Smooth text wrapping */
+.note p {
+  word-wrap: break-word;
+  line-height: 1.4;
+}
+
+/* Button improvement */
+.note button {
+  align-self: flex-start;
+}
+
+/* Add subtle animation */
+.note {
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Better focus UX */
+input:focus, textarea:focus {
+  outline: 2px solid #00c6ff;
+}

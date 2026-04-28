@@ -1,6 +1,6 @@
 const API = "/notes";
 
-// 🚀 Load notes from backend
+// 🚀 Load notes
 async function loadNotes() {
   try {
     const res = await fetch(API);
@@ -13,17 +13,16 @@ async function loadNotes() {
   }
 }
 
-// 🎨 Display notes in UI
+// 🎨 Display notes
 function displayNotes(notes) {
   const notesDiv = document.getElementById("notes");
   notesDiv.innerHTML = "";
 
   if (!notes || notes.length === 0) {
-    notesDiv.innerHTML = "<p style='color:#aaa;'>No notes yet...</p>";
+    notesDiv.innerHTML = "<p class='empty'>No notes yet...</p>";
     return;
   }
 
-  // ✅ reverse safely without mutating original
   const reversed = [...notes].reverse();
 
   reversed.forEach(note => {
@@ -42,8 +41,11 @@ function displayNotes(notes) {
 
 // ➕ Add note
 async function addNote() {
-  const title = document.getElementById("titleInput").value.trim();
-  const content = document.getElementById("contentInput").value.trim();
+  const titleEl = document.getElementById("titleInput");
+  const contentEl = document.getElementById("contentInput");
+
+  const title = titleEl.value.trim();
+  const content = contentEl.value.trim();
 
   if (!title || !content) {
     alert("Please fill both fields");
@@ -61,11 +63,10 @@ async function addNote() {
 
     if (!res.ok) throw new Error("Failed to add note");
 
-    // Clear inputs
-    document.getElementById("titleInput").value = "";
-    document.getElementById("contentInput").value = "";
+    titleEl.value = "";
+    contentEl.value = "";
 
-    await loadNotes(); // ✅ refresh after add
+    await loadNotes();
   } catch (err) {
     console.error("Add error:", err);
     alert("Error adding note");
@@ -81,14 +82,14 @@ async function deleteNote(id) {
 
     if (!res.ok) throw new Error("Failed to delete");
 
-    await loadNotes(); // ✅ refresh after delete
+    await loadNotes();
   } catch (err) {
     console.error("Delete error:", err);
     alert("Error deleting note");
   }
 }
 
-// 🔍 Search notes
+// 🔍 Search
 function searchNotes() {
   const keyword = document.getElementById("search").value.toLowerCase();
   const notes = document.querySelectorAll(".note");
@@ -100,5 +101,5 @@ function searchNotes() {
   });
 }
 
-// 🚀 Initial load
+// 🚀 Init
 window.onload = loadNotes;
