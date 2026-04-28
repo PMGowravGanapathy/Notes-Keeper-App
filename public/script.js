@@ -19,14 +19,16 @@ function displayNotes(notes) {
   notesDiv.innerHTML = "";
 
   if (!notes || notes.length === 0) {
-    notesDiv.innerHTML = "<p style='color: #aaa;'>No notes yet...</p>";
+    notesDiv.innerHTML = "<p style='color:#aaa;'>No notes yet...</p>";
     return;
   }
 
-  // Show latest first
-  [...notes].reverse().forEach(note => {
+  // ✅ reverse safely without mutating original
+  const reversed = [...notes].reverse();
+
+  reversed.forEach(note => {
     const div = document.createElement("div");
-    div.classList.add("note");
+    div.className = "note";
 
     div.innerHTML = `
       <h3>${note.title}</h3>
@@ -63,8 +65,7 @@ async function addNote() {
     document.getElementById("titleInput").value = "";
     document.getElementById("contentInput").value = "";
 
-    await loadNotes(); // ✅ ensure UI updates after API completes
-
+    await loadNotes(); // ✅ refresh after add
   } catch (err) {
     console.error("Add error:", err);
     alert("Error adding note");
@@ -80,8 +81,7 @@ async function deleteNote(id) {
 
     if (!res.ok) throw new Error("Failed to delete");
 
-    await loadNotes(); // ✅ refresh UI
-
+    await loadNotes(); // ✅ refresh after delete
   } catch (err) {
     console.error("Delete error:", err);
     alert("Error deleting note");
