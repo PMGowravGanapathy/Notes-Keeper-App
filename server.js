@@ -1,26 +1,38 @@
 const express = require("express");
 const fs = require("fs");
-const bodyParser = require("body-parser");
+const path = require("path");
 const cors = require("cors");
 
 const app = express();
-const PORT = 3000;
 
 app.use(cors());
-app.use(bodyParser.json());
-app.use(express.static("public"));
+app.use(express.json());
 
-const NOTES_FILE = "notes.json";
-const USERS_FILE = "users.json";
+// ✅ Use absolute paths (important for Vercel)
+const NOTES_FILE = path.join(__dirname, "notes.json");
+const USERS_FILE = path.join(__dirname, "users.json");
 
+//////////////////////
 // Helper functions
+//////////////////////
+
 const readData = (file) => {
-  if (!fs.existsSync(file)) return [];
-  return JSON.parse(fs.readFileSync(file));
+  try {
+    if (!fs.existsSync(file)) return [];
+    const data = fs.readFileSync(file, "utf-8");
+    return data ? JSON.parse(data) : [];
+  } catch (err) {
+    console.error("Read Error:", err);
+    return [];
+  }
 };
 
 const writeData = (file, data) => {
-  fs.writeFileSync(file, JSON.stringify(data, null, 2));
+  try {
+    fs.writeFileSync(file, JSON.stringify(data, null, 2));
+  } catch (err) {
+    console.error("Write Error:", err);
+  }
 };
 
 //////////////////////
@@ -92,6 +104,8 @@ app.delete("/notes/:id", (req, res) => {
   res.json({ message: "Deleted" });
 });
 
-app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
-});
+//////////////////////
+// ✅ EXPORT FOR VERCEL
+//////////////////////
+
+module.exports = app;
