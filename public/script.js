@@ -34,8 +34,8 @@ function displayNotes(notes) {
 }
 
 async function addNote() {
-  const title = document.querySelector("input").value;
-  const content = document.querySelector("textarea").value;
+  const title = document.getElementById("titleInput").value.trim();
+  const content = document.getElementById("contentInput").value.trim();
 
   if (!title || !content) {
     alert("Please fill both fields");
@@ -50,11 +50,10 @@ async function addNote() {
     body: JSON.stringify({ title, content }),
   });
 
-  // Clear inputs
-  document.querySelector("input").value = "";
-  document.querySelector("textarea").value = "";
+  // Clear fields
+  document.getElementById("titleInput").value = "";
+  document.getElementById("contentInput").value = "";
 
-  // Reload notes
   loadNotes();
 }
 
