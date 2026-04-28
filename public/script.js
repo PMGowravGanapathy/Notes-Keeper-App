@@ -1,13 +1,16 @@
-const API = "/notes";
+// 🔥 Automatically detect API base (works for both local + Render)
+const API = window.location.origin + "/notes";
 
 // 🚀 Load notes
 async function loadNotes() {
   try {
     const res = await fetch(API);
+
     if (!res.ok) throw new Error("Failed to fetch notes");
 
     const notes = await res.json();
     displayNotes(notes);
+
   } catch (err) {
     console.error("Error loading notes:", err);
   }
@@ -30,8 +33,8 @@ function displayNotes(notes) {
     div.className = "note";
 
     div.innerHTML = `
-      <h3>${note.title}</h3>
-      <p>${note.content}</p>
+      <h3>${escapeHTML(note.title)}</h3>
+      <p>${escapeHTML(note.content)}</p>
       <button onclick="deleteNote(${note.id})">Delete</button>
     `;
 
@@ -63,10 +66,13 @@ async function addNote() {
 
     if (!res.ok) throw new Error("Failed to add note");
 
+    // Clear inputs
     titleEl.value = "";
     contentEl.value = "";
 
+    // 🔥 Force reload
     await loadNotes();
+
   } catch (err) {
     console.error("Add error:", err);
     alert("Error adding note");
@@ -83,13 +89,14 @@ async function deleteNote(id) {
     if (!res.ok) throw new Error("Failed to delete");
 
     await loadNotes();
+
   } catch (err) {
     console.error("Delete error:", err);
     alert("Error deleting note");
   }
 }
 
-// 🔍 Search
+// 🔍 Search notes
 function searchNotes() {
   const keyword = document.getElementById("search").value.toLowerCase();
   const notes = document.querySelectorAll(".note");
@@ -99,6 +106,17 @@ function searchNotes() {
       ? "block"
       : "none";
   });
+}
+
+// 🔐 Prevent HTML injection (small but important)
+function escapeHTML(str) {
+  return str.replace(/[&<>"']/g, tag => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#39;"
+  }[tag]));
 }
 
 // 🚀 Init

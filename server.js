@@ -8,15 +8,15 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// ✅ Serve static frontend properly
+// ✅ Serve frontend
 app.use(express.static(path.join(__dirname, "public")));
 
-// ✅ Root route (VERY IMPORTANT)
+// ✅ Root route
 app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "index.html"));
 });
 
-// ✅ File paths (safe for Vercel)
+// 📁 File paths
 const NOTES_FILE = path.join(__dirname, "notes.json");
 const USERS_FILE = path.join(__dirname, "users.json");
 
@@ -111,4 +111,13 @@ app.delete("/notes/:id", (req, res) => {
   writeData(NOTES_FILE, notes);
   res.json({ message: "Deleted" });
 });
-module.exports = app;
+
+//////////////////////
+// 🚀 START SERVER (RENDER FIX)
+//////////////////////
+
+const PORT = process.env.PORT || 3000;
+
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
