@@ -1,34 +1,44 @@
-const API = "/notes"; 
+const API = "/notes";
 
-// Load notes from backend
+// 🚀 Load notes from backend
 async function loadNotes() {
   try {
     const res = await fetch(API);
+    if (!res.ok) throw new Error("Failed to fetch notes");
+
     const notes = await res.json();
-    displayNotes(notes); 
+    displayNotes(notes);
   } catch (err) {
     console.error("Error loading notes:", err);
   }
 }
 
-// Display notes in UI
+// 🎨 Display notes in UI
 function displayNotes(notes) {
-  const notesDiv = document.getElementById("notes"); 
+  const notesDiv = document.getElementById("notes");
   notesDiv.innerHTML = "";
+
+  if (!notes || notes.length === 0) {
+    notesDiv.innerHTML = "<p style='color: #aaa;'>No notes yet...</p>";
+    return;
+  }
 
   // Show latest first
   [...notes].reverse().forEach(note => {
-    notesDiv.innerHTML += `
-      <div class="note">
-        <h3>${note.title}</h3>
-        <p>${note.content}</p>
-        <button onclick="deleteNote(${note.id})">Delete</button>
-      </div>
+    const div = document.createElement("div");
+    div.classList.add("note");
+
+    div.innerHTML = `
+      <h3>${note.title}</h3>
+      <p>${note.content}</p>
+      <button onclick="deleteNote(${note.id})">Delete</button>
     `;
+
+    notesDiv.appendChild(div);
   });
 }
 
-// Add note
+// ➕ Add note
 async function addNote() {
   const title = document.getElementById("titleInput").value.trim();
   const content = document.getElementById("contentInput").value.trim();
@@ -38,28 +48,47 @@ async function addNote() {
     return;
   }
 
-  await fetch(API, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ title, content }),
-  });
+  try {
+    const res = await fetch(API, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ title, content }),
+    });
 
-  // Clear inputs
-  document.getElementById("titleInput").value = "";
-  document.getElementById("contentInput").value = "";
+    if (!res.ok) throw new Error("Failed to add note");
 
-  loadNotes(); // ✅ refresh UI
+    // Clear inputs
+    document.getElementById("titleInput").value = "";
+    document.getElementById("contentInput").value = "";
+
+    await loadNotes(); // ✅ ensure UI updates after API completes
+
+  } catch (err) {
+    console.error("Add error:", err);
+    alert("Error adding note");
+  }
 }
 
-// Delete note
+// ❌ Delete note
 async function deleteNote(id) {
-  await fetch(`${API}/${id}`, { method: "DELETE" });
-  loadNotes();
+  try {
+    const res = await fetch(`${API}/${id}`, {
+      method: "DELETE",
+    });
+
+    if (!res.ok) throw new Error("Failed to delete");
+
+    await loadNotes(); // ✅ refresh UI
+
+  } catch (err) {
+    console.error("Delete error:", err);
+    alert("Error deleting note");
+  }
 }
 
-// Search notes
+// 🔍 Search notes
 function searchNotes() {
   const keyword = document.getElementById("search").value.toLowerCase();
   const notes = document.querySelectorAll(".note");
@@ -71,5 +100,5 @@ function searchNotes() {
   });
 }
 
-// Initial load
+// 🚀 Initial load
 window.onload = loadNotes;
