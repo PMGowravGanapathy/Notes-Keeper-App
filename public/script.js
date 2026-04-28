@@ -1,10 +1,20 @@
 const API = "http://localhost:3000/notes";
 
 async function loadNotes() {
-  const res = await fetch(API);
+  const res = await fetch("/notes");
   const notes = await res.json();
 
-  displayNotes(notes);
+  const container = document.getElementById("notesContainer");
+  container.innerHTML = "";
+
+  notes.forEach((note) => {
+    const div = document.createElement("div");
+    div.innerHTML = `
+      <h3>${note.title}</h3>
+      <p>${note.content}</p>
+    `;
+    container.appendChild(div);
+  });
 }
 
 function displayNotes(notes) {
@@ -24,31 +34,27 @@ function displayNotes(notes) {
 }
 
 async function addNote() {
-  const titleInput = document.getElementById("title");
-  const contentInput = document.getElementById("content");
+  const title = document.querySelector("input").value;
+  const content = document.querySelector("textarea").value;
 
-  const title = titleInput.value.trim();
-  const content = contentInput.value.trim();
-
-  // 🚫 Prevent empty notes
   if (!title || !content) {
-    alert("Please enter both title and content!");
+    alert("Please fill both fields");
     return;
   }
 
-  await fetch(API, {
+  await fetch("/notes", {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ title, content })
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ title, content }),
   });
 
-  // 🔥 Clear inputs after adding
-  titleInput.value = "";
-  contentInput.value = "";
+  // Clear inputs
+  document.querySelector("input").value = "";
+  document.querySelector("textarea").value = "";
 
-  // 🎯 Focus back to title (nice UX touch)
-  titleInput.focus();
-
+  // Reload notes
   loadNotes();
 }
 
