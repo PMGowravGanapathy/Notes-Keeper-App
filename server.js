@@ -8,7 +8,15 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// ✅ Use absolute paths (important for Vercel)
+// ✅ Serve static frontend properly
+app.use(express.static(path.join(__dirname, "public")));
+
+// ✅ Root route (VERY IMPORTANT)
+app.get("/", (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "index.html"));
+});
+
+// ✅ File paths (safe for Vercel)
 const NOTES_FILE = path.join(__dirname, "notes.json");
 const USERS_FILE = path.join(__dirname, "users.json");
 
@@ -103,9 +111,4 @@ app.delete("/notes/:id", (req, res) => {
   writeData(NOTES_FILE, notes);
   res.json({ message: "Deleted" });
 });
-
-//////////////////////
-// ✅ EXPORT FOR VERCEL
-//////////////////////
-
 module.exports = app;
